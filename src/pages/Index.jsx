@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Container, VStack, HStack, Input, Button, Checkbox, Text, IconButton } from "@chakra-ui/react";
-import { FaTrash } from "react-icons/fa";
+import { FaTrash, FaThumbsUp, FaThumbsDown } from "react-icons/fa";
 
 const Index = () => {
   const [tasks, setTasks] = useState([]);
@@ -8,7 +8,7 @@ const Index = () => {
 
   const addTask = () => {
     if (newTask.trim() !== "") {
-      setTasks([...tasks, { text: newTask, completed: false }]);
+      setTasks([...tasks, { text: newTask, completed: false, votes: 0 }]);
       setNewTask("");
     }
   };
@@ -21,6 +21,20 @@ const Index = () => {
   const toggleTaskCompletion = (index) => {
     const newTasks = tasks.map((task, i) => 
       i === index ? { ...task, completed: !task.completed } : task
+    );
+    setTasks(newTasks);
+  };
+
+  const upvoteTask = (index) => {
+    const newTasks = tasks.map((task, i) => 
+      i === index ? { ...task, votes: task.votes + 1 } : task
+    );
+    setTasks(newTasks);
+  };
+
+  const downvoteTask = (index) => {
+    const newTasks = tasks.map((task, i) => 
+      i === index ? { ...task, votes: task.votes - 1 } : task
     );
     setTasks(newTasks);
   };
@@ -45,12 +59,27 @@ const Index = () => {
               >
                 <Text as={task.completed ? "s" : ""}>{task.text}</Text>
               </Checkbox>
-              <IconButton 
-                aria-label="Delete task" 
-                icon={<FaTrash />} 
-                onClick={() => deleteTask(index)} 
-                colorScheme="red"
-              />
+              <HStack>
+                <IconButton 
+                  aria-label="Upvote task" 
+                  icon={<FaThumbsUp />} 
+                  onClick={() => upvoteTask(index)} 
+                  colorScheme="green"
+                />
+                <Text>{task.votes}</Text>
+                <IconButton 
+                  aria-label="Downvote task" 
+                  icon={<FaThumbsDown />} 
+                  onClick={() => downvoteTask(index)} 
+                  colorScheme="red"
+                />
+                <IconButton 
+                  aria-label="Delete task" 
+                  icon={<FaTrash />} 
+                  onClick={() => deleteTask(index)} 
+                  colorScheme="red"
+                />
+              </HStack>
             </HStack>
           ))}
         </VStack>
